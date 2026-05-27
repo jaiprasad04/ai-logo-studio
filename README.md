@@ -1,6 +1,9 @@
-# 🎨 AI Logo Studio — High-Octane Vector Brand Logo SaaS
+# 🎨 AI Logo Studio — Open-Source AI Logo & Brand Identity Generator SaaS (Free Looka / Brandmark Alternative)
 
-> **Generate stunning vector brand logos and corporate identity concepts with advanced AI.** Built with Next.js, this open-source template serves as a complete, self-contained SaaS boilerplate for designing high-fidelity logos, supporting both text-to-logo prompts and image/sketch-to-logo transformations powered by the Nano Banana Pro engine.
+> **Design professional brand logos from text prompts or sketch references in seconds.** A production-ready, self-hostable Next.js SaaS boilerplate with text-to-logo and image-to-logo generation, brand identity concepts, and built-in Stripe billing. A free open-source alternative to Looka, Brandmark.io, LogoAI, Wix Logo Maker, and Canva AI — powered by the MuAPI Nano Banana Pro engine.
+
+**Tech stack:** Next.js 14 (App Router) · Prisma · PostgreSQL · NextAuth (Google OAuth) · Stripe · Tailwind CSS · MuAPI Nano Banana Pro
+**Use cases:** Startup branding · Small business logos · Freelance designers · Agency rapid prototyping · Product launch identity · App icon design · Social media branding · Ecommerce store branding
 
 ![AI Logo Studio Workstation](https://cdn.muapi.ai/data/2/629528572256/Screenshot_2026-05-27_191436.png)
 
