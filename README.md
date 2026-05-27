@@ -6,7 +6,7 @@
 
 ## 🌐 Try the Live Engine
 
-**Hosted Demo:** [ai-logo-studio.vercel.app](https://ai-logo-studio-iota.vercel.app/)
+**Hosted Demo:** [ai-logo-studio-rho.vercel.app](https://ai-logo-studio-rho.vercel.app/)
 
 Experience the full dark-mode, responsive interface. Sign in with Google to explore the Logo Generation Workstation, advanced aspect ratio options, custom sketch overlay uploads, and credit tiers directly from your browser.
 
