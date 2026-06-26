@@ -3,9 +3,20 @@
 import { useState, useEffect, useRef } from "react";
 import { useSession, signIn } from "next-auth/react";
 import {
-  FaCoins, FaSpinner, FaDownload, FaSlidersH, FaHandSparkles, FaTrashAlt,
-  FaChevronDown, FaCheck, FaInfoCircle, FaPlus, FaSearch, FaImage, FaSyncAlt,
-  FaHistory
+  FaCoins,
+  FaSpinner,
+  FaDownload,
+  FaSlidersH,
+  FaHandSparkles,
+  FaTrashAlt,
+  FaChevronDown,
+  FaCheck,
+  FaInfoCircle,
+  FaPlus,
+  FaSearch,
+  FaImage,
+  FaSyncAlt,
+  FaHistory,
 } from "react-icons/fa";
 import clsx from "clsx";
 
@@ -28,7 +39,9 @@ export default function WorkstationPage() {
   const { data: session, update: updateSession } = useSession();
 
   // Inputs
-  const [prompt, setPrompt] = useState("A minimalist vector logo of a soaring eagle, clean sharp geometry, high contrast, flat color theme, corporate luxury style, dark background.");
+  const [prompt, setPrompt] = useState(
+    "A minimalist vector logo of a soaring eagle, clean sharp geometry, high contrast, flat color theme, corporate luxury style, dark background.",
+  );
   const [aspectRatio, setAspectRatio] = useState("1:1");
   const [resolution, setResolution] = useState("1k");
   const [inputImage, setInputImage] = useState(null);
@@ -59,7 +72,7 @@ export default function WorkstationPage() {
 
   // Polling for processing creations in history
   useEffect(() => {
-    const hasProcessing = history.some(item => item.status === "processing");
+    const hasProcessing = history.some((item) => item.status === "processing");
     if (!hasProcessing) return;
 
     const interval = setInterval(async () => {
@@ -68,14 +81,16 @@ export default function WorkstationPage() {
         if (res.ok) {
           const data = await res.json();
           setHistory(data);
-          
+
           // Update active logo if it finishes
           if (activeLogo && activeLogo.status === "processing") {
-            const updatedActive = data.find(l => l.id === activeLogo.id);
+            const updatedActive = data.find((l) => l.id === activeLogo.id);
             if (updatedActive && updatedActive.status !== "processing") {
               setActiveLogo(updatedActive);
               if (generatingStatus === "generating") {
-                setGeneratingStatus(updatedActive.status === "completed" ? "success" : "error");
+                setGeneratingStatus(
+                  updatedActive.status === "completed" ? "success" : "error",
+                );
               }
             }
           }
@@ -91,7 +106,10 @@ export default function WorkstationPage() {
   // Click outside to close dropdown
   useEffect(() => {
     const handleOutsideClick = (e) => {
-      if (ratioDropdownRef.current && !ratioDropdownRef.current.contains(e.target)) {
+      if (
+        ratioDropdownRef.current &&
+        !ratioDropdownRef.current.contains(e.target)
+      ) {
         setIsRatioOpen(false);
       }
     };
@@ -206,12 +224,14 @@ export default function WorkstationPage() {
           aspectRatio,
           resolution,
           inputImage,
-          smartSearch
-        })
+          smartSearch,
+        }),
       });
 
       if (res.status === 402) {
-        setGeneratingError("Insufficient credits. Please purchase a package in pricing page.");
+        setGeneratingError(
+          "Insufficient credits. Please purchase a package in pricing page.",
+        );
         setGeneratingStatus("error");
         return;
       }
@@ -232,7 +252,9 @@ export default function WorkstationPage() {
       }
     } catch (err) {
       console.error(err);
-      setGeneratingError("An error occurred during logo generation. Please try again.");
+      setGeneratingError(
+        "An error occurred during logo generation. Please try again.",
+      );
       setGeneratingStatus("error");
     }
   };
@@ -243,7 +265,7 @@ export default function WorkstationPage() {
     const maxAttempts = 20;
 
     while (!completed && attempts < maxAttempts) {
-      await new Promise(resolve => setTimeout(resolve, 2500));
+      await new Promise((resolve) => setTimeout(resolve, 2500));
       attempts++;
 
       try {
@@ -256,7 +278,9 @@ export default function WorkstationPage() {
             completed = true;
             fetchHistory();
           } else if (data.status === "failed") {
-            setGeneratingError("AI logo generation failed. Please refine your prompt and try again.");
+            setGeneratingError(
+              "AI logo generation failed. Please refine your prompt and try again.",
+            );
             setGeneratingStatus("error");
             completed = true;
             fetchHistory();
@@ -268,19 +292,26 @@ export default function WorkstationPage() {
     }
 
     if (!completed) {
-      setGeneratingError("Generation is taking longer than usual. It will complete in the background and show in your history.");
+      setGeneratingError(
+        "Generation is taking longer than usual. It will complete in the background and show in your history.",
+      );
       setGeneratingStatus("error");
     }
   };
 
   const handleDelete = async (id, e) => {
     e.stopPropagation();
-    if (!confirm("Are you sure you want to delete this logo? This action cannot be undone.")) return;
+    if (
+      !confirm(
+        "Are you sure you want to delete this logo? This action cannot be undone.",
+      )
+    )
+      return;
 
     try {
       const res = await fetch(`/api/logos?id=${id}`, { method: "DELETE" });
       if (res.ok) {
-        setHistory(prev => prev.filter(item => item.id !== id));
+        setHistory((prev) => prev.filter((item) => item.id !== id));
         if (activeLogo?.id === id) {
           setActiveLogo(null);
         }
@@ -303,30 +334,32 @@ export default function WorkstationPage() {
 
   return (
     <div className="flex-1 flex flex-col md:flex-row md:overflow-hidden overflow-y-auto bg-zinc-950 text-zinc-100 font-sans">
-      
       {/* ─── LEFT WORKSPACE: SIDEBAR CONFIGURATION ────────────────────────────────────────── */}
       <div className="w-full md:w-[460px] border-r border-zinc-800 bg-zinc-900/60 flex flex-col md:overflow-y-auto overflow-visible flex-shrink-0">
-        
         {/* Header Title */}
         <div className="p-5 border-b border-zinc-800 flex-shrink-0 bg-zinc-900/85 flex items-center justify-between">
           <div>
             <h1 className="text-base font-heading font-extrabold text-white tracking-tight flex items-center gap-2">
               <FaHandSparkles className="text-violet-400" /> Logo Design Engine
             </h1>
-            <p className="text-[11px] text-zinc-400 mt-1 font-medium">Input directives, upload sketches, and generate professional brand vector graphics.</p>
+            <p className="text-[11px] text-zinc-400 mt-1 font-medium">
+              Input directives, upload sketches, and generate professional brand
+              vector graphics.
+            </p>
           </div>
         </div>
 
         {/* Input Form Fields */}
         <div className="p-5 space-y-6 flex-1 bg-zinc-900/30">
-          
           {/* 1. Prompt Script */}
           <div>
             <div className="flex justify-between items-center mb-2">
               <label className="block text-[11px] font-black text-zinc-200 uppercase tracking-wider">
                 1. Logo Prompt Directive
               </label>
-              <span className="text-[10px] text-zinc-550 font-black">{prompt.length} / 1,000</span>
+              <span className="text-[10px] text-zinc-550 font-black">
+                {prompt.length} / 1,000
+              </span>
             </div>
             <textarea
               value={prompt}
@@ -342,7 +375,7 @@ export default function WorkstationPage() {
             <label className="block text-[11px] font-black text-zinc-200 uppercase tracking-wider mb-2">
               2. Sketch Concept (Optional)
             </label>
-            
+
             <div className="relative group border border-zinc-800 rounded-xl overflow-hidden bg-zinc-950/45 hover:border-zinc-750 transition-all duration-200">
               <input
                 type="file"
@@ -351,21 +384,30 @@ export default function WorkstationPage() {
                 accept=".png,.jpg,.jpeg"
                 className="hidden"
               />
-              
+
               {isUploading ? (
                 <div className="flex flex-col items-center justify-center py-7 text-center">
                   <FaSpinner className="animate-spin text-xl text-violet-400 mb-2" />
-                  <span className="text-[10px] font-black text-zinc-300 uppercase tracking-wider">Uploading Sketch...</span>
+                  <span className="text-[10px] font-black text-zinc-300 uppercase tracking-wider">
+                    Uploading Sketch...
+                  </span>
                 </div>
               ) : inputImage ? (
                 <div className="relative w-full aspect-[16/10] bg-zinc-950 flex items-center justify-center p-2">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={inputImage} alt="Sketch Reference" className="max-h-full max-w-full object-contain rounded" />
+                  <img
+                    src={inputImage}
+                    alt="Sketch Reference"
+                    className="max-h-full max-w-full object-contain rounded"
+                  />
                   <div className="absolute inset-0 bg-black/75 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-3 transition-opacity duration-200">
                     <button
                       type="button"
                       onClick={() => {
-                        if (!session?.user) { signIn("google"); return; }
+                        if (!session?.user) {
+                          signIn("google");
+                          return;
+                        }
                         fileInputRef.current?.click();
                       }}
                       className="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-white rounded text-[10px] font-black uppercase transition-all cursor-pointer"
@@ -384,7 +426,10 @@ export default function WorkstationPage() {
               ) : (
                 <div
                   onClick={() => {
-                    if (!session?.user) { signIn("google"); return; }
+                    if (!session?.user) {
+                      signIn("google");
+                      return;
+                    }
                     fileInputRef.current?.click();
                   }}
                   className="flex flex-col items-center justify-center py-7 cursor-pointer hover:bg-zinc-950/20 transition-all border-2 border-dashed border-zinc-800 hover:border-zinc-750 rounded-xl"
@@ -393,15 +438,20 @@ export default function WorkstationPage() {
                   <span className="text-[10px] font-black text-zinc-300 uppercase tracking-wider">
                     Upload Draft Sketch
                   </span>
-                  <span className="text-[9px] text-zinc-550 mt-1 font-bold">PNG or JPG (Max 5MB)</span>
+                  <span className="text-[9px] text-zinc-550 mt-1 font-bold">
+                    PNG or JPG (Max 5MB)
+                  </span>
                 </div>
               )}
             </div>
-            
+
             {inputImage && (
               <p className="text-[9px] text-violet-400 font-bold mt-2 flex items-center gap-1.5 leading-relaxed">
                 <FaInfoCircle className="text-xs" />
-                <span>Sketch present: Workspace will automatically use image refinement model (nano-banana-pro-edit).</span>
+                <span>
+                  Sketch present: Workspace will automatically use image
+                  refinement model (nano-banana-pro-edit).
+                </span>
               </p>
             )}
           </div>
@@ -417,11 +467,21 @@ export default function WorkstationPage() {
                 onClick={() => setIsRatioOpen(!isRatioOpen)}
                 className={clsx(
                   "w-full bg-zinc-950 border rounded px-3.5 py-3 text-left text-xs font-black text-white flex justify-between items-center cursor-pointer transition-all",
-                  isRatioOpen ? "border-violet-500 ring-1 ring-violet-500/20" : "border-zinc-800 hover:border-zinc-700"
+                  isRatioOpen
+                    ? "border-violet-500 ring-1 ring-violet-500/20"
+                    : "border-zinc-800 hover:border-zinc-700",
                 )}
               >
-                <span>{ASPECT_RATIOS.find(r => r.value === aspectRatio)?.label || aspectRatio}</span>
-                <FaChevronDown className={clsx("text-zinc-500 text-[9px] transition-transform duration-200", isRatioOpen && "transform rotate-180")} />
+                <span>
+                  {ASPECT_RATIOS.find((r) => r.value === aspectRatio)?.label ||
+                    aspectRatio}
+                </span>
+                <FaChevronDown
+                  className={clsx(
+                    "text-zinc-500 text-[9px] transition-transform duration-200",
+                    isRatioOpen && "transform rotate-180",
+                  )}
+                />
               </button>
 
               {/* Upward opening dropdown list overlay */}
@@ -439,11 +499,15 @@ export default function WorkstationPage() {
                         }}
                         className={clsx(
                           "w-full text-left px-3.5 py-2 text-xs transition-colors flex items-center justify-between cursor-pointer",
-                          isSelected ? "bg-violet-950/40 text-violet-400 font-extrabold" : "text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                          isSelected
+                            ? "bg-violet-950/40 text-violet-400 font-extrabold"
+                            : "text-zinc-300 hover:bg-zinc-800 hover:text-white",
                         )}
                       >
                         <span>{ratio.label}</span>
-                        {isSelected && <FaCheck className="text-violet-400 text-[10px]" />}
+                        {isSelected && (
+                          <FaCheck className="text-violet-400 text-[10px]" />
+                        )}
                       </button>
                     );
                   })}
@@ -457,7 +521,7 @@ export default function WorkstationPage() {
             <label className="block text-[11px] font-black text-zinc-200 uppercase tracking-wider mb-2.5">
               4. Target Resolution & Quality
             </label>
-            
+
             <div className="grid grid-cols-3 gap-2">
               {RESOLUTIONS.map((res) => {
                 const isSelected = res.value === resolution;
@@ -470,12 +534,18 @@ export default function WorkstationPage() {
                       "flex flex-col items-center py-2.5 border rounded transition-all cursor-pointer",
                       isSelected
                         ? "bg-violet-950/20 border-violet-500 text-white shadow-md shadow-violet-500/10"
-                        : "bg-zinc-950 border-zinc-800 hover:border-zinc-700 text-zinc-450 hover:text-zinc-200"
+                        : "bg-zinc-950 border-zinc-800 hover:border-zinc-700 text-zinc-450 hover:text-zinc-200",
                     )}
                   >
-                    <span className="text-[10px] font-black uppercase tracking-wider">{res.label.split(" ")[0]}</span>
-                    <span className="text-[11px] font-bold mt-1 font-heading text-white">{res.label.split(" ")[1]}</span>
-                    <span className="text-[8px] text-zinc-500 mt-1 font-bold">{res.cost} credits</span>
+                    <span className="text-[10px] font-black uppercase tracking-wider">
+                      {res.label.split(" ")[0]}
+                    </span>
+                    <span className="text-[11px] font-bold mt-1 font-heading text-white">
+                      {res.label.split(" ")[1]}
+                    </span>
+                    <span className="text-[8px] text-zinc-500 mt-1 font-bold">
+                      {res.cost} credits
+                    </span>
                   </button>
                 );
               })}
@@ -489,21 +559,36 @@ export default function WorkstationPage() {
               onClick={() => setSmartSearch(!smartSearch)}
               className={clsx(
                 "w-full flex items-center justify-between p-3 rounded border transition-all cursor-pointer",
-                smartSearch ? "bg-violet-950/10 border-violet-550/40 text-violet-400" : "bg-zinc-950/40 border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-zinc-350"
+                smartSearch
+                  ? "bg-violet-950/10 border-violet-550/40 text-violet-400"
+                  : "bg-zinc-950/40 border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-zinc-350",
               )}
             >
               <div className="flex items-center gap-2.5">
-                <FaSearch className={smartSearch ? "text-violet-400" : "text-zinc-500"} />
-                <span className="text-[10px] font-black uppercase tracking-wider">Smart Search Prompt Enhancer</span>
+                <FaSearch
+                  className={smartSearch ? "text-violet-400" : "text-zinc-500"}
+                />
+                <span className="text-[10px] font-black uppercase tracking-wider">
+                  Smart Search Prompt Enhancer
+                </span>
               </div>
-              
+
               {/* Beautiful custom switch track */}
-              <div className={clsx("w-8 h-4 rounded-full relative p-0.5 transition-colors duration-250 flex items-center", smartSearch ? "bg-violet-600" : "bg-zinc-800")}>
-                <div className={clsx("h-3 w-3 rounded-full bg-white transition-transform duration-200 ease-in-out shadow-sm", smartSearch ? "translate-x-4" : "translate-x-0")} />
+              <div
+                className={clsx(
+                  "w-8 h-4 rounded-full relative p-0.5 transition-colors duration-250 flex items-center",
+                  smartSearch ? "bg-violet-600" : "bg-zinc-800",
+                )}
+              >
+                <div
+                  className={clsx(
+                    "h-3 w-3 rounded-full bg-white transition-transform duration-200 ease-in-out shadow-sm",
+                    smartSearch ? "translate-x-4" : "translate-x-0",
+                  )}
+                />
               </div>
             </button>
           </div>
-
         </div>
 
         {/* Generate triggers panel */}
@@ -519,9 +604,11 @@ export default function WorkstationPage() {
             ) : (
               <FaHandSparkles className="text-sm" />
             )}
-            
+
             <span>
-              {generatingStatus === "generating" ? "Generating..." : `Manifest Logo — ${currentCost} Credits`}
+              {generatingStatus === "generating"
+                ? "Generating..."
+                : `Manifest Logo — ${currentCost} Credits`}
             </span>
           </button>
 
@@ -531,12 +618,10 @@ export default function WorkstationPage() {
             </div>
           )}
         </div>
-
       </div>
 
       {/* ─── RIGHT PANEL: MAIN CANVAS & PREVIEW ────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col md:overflow-hidden overflow-visible min-w-0 bg-transparent relative">
-        
         {/* Absolute Background Graphics */}
         <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
           <div className="absolute top-1/4 left-1/4 w-[60%] h-[60%] bg-violet-650/[0.04] rounded-full blur-[140px] animate-pulse" />
@@ -544,7 +629,6 @@ export default function WorkstationPage() {
         </div>
 
         <div className="flex-1 p-6 md:p-8 flex flex-col md:overflow-y-auto overflow-visible z-10 max-h-full">
-          
           <div className="flex-1 flex items-center justify-center min-h-[300px]">
             {generatingStatus === "generating" ? (
               /* Loading manifestation state */
@@ -554,8 +638,13 @@ export default function WorkstationPage() {
                   <FaHandSparkles className="text-2xl text-violet-400 animate-pulse" />
                 </div>
                 <div className="space-y-1.5">
-                  <h3 className="text-xs font-black uppercase text-white tracking-widest">Generating Brand Graphic</h3>
-                  <p className="text-[10px] text-zinc-400 font-medium">Est. queue wait: 15 seconds. Active time elapsed: {elapsedSeconds}s</p>
+                  <h3 className="text-xs font-black uppercase text-white tracking-widest">
+                    Generating Brand Graphic
+                  </h3>
+                  <p className="text-[10px] text-zinc-400 font-medium">
+                    Est. queue wait: 15 seconds. Active time elapsed:{" "}
+                    {elapsedSeconds}s
+                  </p>
                 </div>
               </div>
             ) : activeLogo ? (
@@ -564,14 +653,24 @@ export default function WorkstationPage() {
                 {activeLogo.resultImage ? (
                   <>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={activeLogo.resultImage} alt={activeLogo.prompt} className="max-h-full max-w-full object-contain rounded-xl shadow-inner bg-zinc-950" />
-                    
+                    <img
+                      src={activeLogo.resultImage}
+                      alt={activeLogo.prompt}
+                      className="max-h-full max-w-full object-contain rounded-xl shadow-inner bg-zinc-950"
+                    />
+
                     {/* Sketch reference overlay if user generated with sketch */}
                     {activeLogo.inputImage && (
                       <div className="absolute bottom-6 left-6 bg-zinc-900/90 border border-zinc-800 p-2 rounded-xl shadow-2xl max-w-24 sm:max-w-28 pointer-events-auto">
-                        <span className="text-[7.5px] font-black text-violet-400 block uppercase mb-1 tracking-wider text-center">Reference Sketch</span>
+                        <span className="text-[7.5px] font-black text-violet-400 block uppercase mb-1 tracking-wider text-center">
+                          Reference Sketch
+                        </span>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={activeLogo.inputImage} alt="sketch reference" className="aspect-square w-full object-contain rounded border border-zinc-800 bg-zinc-950" />
+                        <img
+                          src={activeLogo.inputImage}
+                          alt="sketch reference"
+                          className="aspect-square w-full object-contain rounded border border-zinc-800 bg-zinc-950"
+                        />
                       </div>
                     )}
 
@@ -579,8 +678,12 @@ export default function WorkstationPage() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-6 flex flex-col justify-end pointer-events-none">
                       <div className="flex items-end justify-between pointer-events-auto">
                         <div className="space-y-1 pr-4 min-w-0">
-                          <span className="text-[9px] font-black uppercase text-violet-400 block tracking-wider">Generated logo result</span>
-                          <h4 className="text-xs font-bold text-white truncate max-w-[200px] italic">"{activeLogo.prompt}"</h4>
+                          <span className="text-[9px] font-black uppercase text-violet-400 block tracking-wider">
+                            Generated logo result
+                          </span>
+                          <h4 className="text-xs font-bold text-white truncate max-w-[200px] italic">
+                            "{activeLogo.prompt}"
+                          </h4>
                         </div>
                         <a
                           href={activeLogo.resultImage}
@@ -598,7 +701,12 @@ export default function WorkstationPage() {
                 ) : (
                   <div className="text-center py-10 text-red-400 font-bold flex flex-col gap-2">
                     <span>Model execution failed.</span>
-                    <button onClick={handleGenerate} className="text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-1.5 rounded border border-zinc-750">Retry</button>
+                    <button
+                      onClick={handleGenerate}
+                      className="text-xs bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-1.5 rounded border border-zinc-750"
+                    >
+                      Retry
+                    </button>
                   </div>
                 )}
               </div>
@@ -610,71 +718,19 @@ export default function WorkstationPage() {
                   <FaHandSparkles className="text-2xl text-zinc-400" />
                 </div>
                 <div className="space-y-2">
-                  <h2 className="text-sm font-black uppercase text-zinc-300 tracking-wider">Engine Standby.</h2>
+                  <h2 className="text-sm font-black uppercase text-zinc-300 tracking-wider">
+                    Engine Standby.
+                  </h2>
                   <p className="text-[10px] text-zinc-450 uppercase tracking-widest leading-loose max-w-xs mx-auto font-medium font-sans">
-                    Submit prompts on the left workspace sidebar or drop sketches to manifest custom logos.
+                    Submit prompts on the left workspace sidebar or drop
+                    sketches to manifest custom logos.
                   </p>
                 </div>
               </div>
             )}
           </div>
-
-          {/* Creations history bottom rail */}
-          <div className="border-t border-zinc-800 pt-6 mt-6 flex-shrink-0">
-            <h3 className="text-xs font-black uppercase tracking-wider text-white mb-4 flex items-center gap-2">
-              <FaHistory className="text-violet-400 text-[10px]" /> Workspace History ({history.length} designs)
-            </h3>
-
-            {history.length === 0 ? (
-              <div className="bg-zinc-900/30 border border-zinc-800 border-dashed rounded-xl py-6 text-center text-zinc-550 text-[10px] font-bold">
-                No designs generated in this workstation session.
-              </div>
-            ) : (
-              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent overscroll-contain">
-                {history.map((logo) => {
-                  const isActive = activeLogo?.id === logo.id;
-                  const isProcessing = logo.status === "processing";
-                  return (
-                    <div
-                      key={logo.id}
-                      onClick={() => !isProcessing && selectHistoryItem(logo)}
-                      className={clsx(
-                        "relative w-24 h-24 rounded-xl border overflow-hidden flex-shrink-0 bg-zinc-900 shadow-md cursor-pointer transition-all hover:scale-[1.01]",
-                        isActive ? "border-violet-500 ring-1 ring-violet-500/20" : "border-zinc-800 hover:border-zinc-700"
-                      )}
-                    >
-                      {logo.resultImage ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={logo.resultImage} alt={logo.prompt} className="w-full h-full object-cover" />
-                      ) : isProcessing ? (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center text-violet-400 bg-violet-950/20 gap-1">
-                          <FaSpinner className="animate-spin text-[10px]" />
-                          <span className="text-[7px] font-bold uppercase">Queue</span>
-                        </div>
-                      ) : (
-                        <div className="absolute inset-0 flex items-center justify-center text-red-500 bg-red-950/20">
-                          <span className="text-[7.5px] font-bold uppercase">Failed</span>
-                        </div>
-                      )}
-
-                      {/* Delete button wrapper */}
-                      <button
-                        onClick={(e) => handleDelete(logo.id, e)}
-                        className="absolute top-1 right-1 h-5 w-5 bg-red-950/80 text-red-400 rounded flex items-center justify-center opacity-0 hover:opacity-100 hover:bg-red-900 hover:text-white transition-opacity"
-                        title="Delete logo"
-                      >
-                        <FaTrashAlt className="text-[8px]" />
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
         </div>
       </div>
-
     </div>
   );
 }
