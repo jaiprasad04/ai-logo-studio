@@ -15,6 +15,8 @@
 
 > 🎨 **[Explore 50+ more open-source AI apps →](https://github.com/Anil-matcha/awesome-generative-ai-apps)**
 
+https://github.com/user-attachments/assets/92a4749e-7bed-4333-954a-960bbc9d6179
+
 ## 🌐 Try the Live Engine
 
 **Hosted Demo:** [ai-logo-studio-rho.vercel.app](https://ai-logo-studio-rho.vercel.app/)
